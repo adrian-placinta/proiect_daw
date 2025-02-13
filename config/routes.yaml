@@ -1,5 +1,19 @@
-controllers:
-    resource:
-        path: ../src/Controller/
-        namespace: App\Controller
-    type: attribute
+homepage:
+    path: /homepage
+    controller: App\Controller\HomeController::index
+
+services:
+    path: /servicii
+    controller: App\Controller\ServiceController::index
+
+contact:
+    path: /contact
+    controller: App\Controller\ContactController::index
+
+my_trips:
+    path: /curse
+    controller: App\Controller\TripController::index
+
+logout:
+    path: /delogare
+    controller: App\Controller\SecurityController::logout
