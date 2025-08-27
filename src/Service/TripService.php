@@ -58,11 +58,22 @@ class TripService extends AbstractController
             throw new \Exception('Această cursă nu mai este disponibilă pentru rezervare.');
         }
 
+        if ($trip->getAvailableSeats() <= 0) {
+            throw new \Exception('Nu mai sunt locuri disponibile pentru această cursă.');
+        }
+
+        $trip->setAvailableSeats($trip->getAvailableSeats() - 1);
+
+        if ($trip->getAvailableSeats() === 0) {
+            $trip->setIsAvailable(false);
+        }
+
         $userTrip = new UserTrip();
         $userTrip->setUser($user);
         $userTrip->setTrip($trip);
 
         $this->entityManager->persist($userTrip);
+        $this->entityManager->persist($trip);
         $this->entityManager->flush();
     }
 
