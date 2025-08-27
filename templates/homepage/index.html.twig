@@ -10,7 +10,12 @@
             <h1>Bine ați venit la <b>TranziteRO</b></h1>
             <p class="lead">Transport rapid, sigur și de încredere.</p>
             <p>{{description}}</p>
-            <a href="/curse" class="btn btn-light btn-lg">Rezerva cursa</a>
+            <a href="{{ path('available_trips') }}" class="btn btn-light btn-lg">Rezerva cursa</a>
+            {% if app.user %}
+                <a href="{{ path('logout') }}" class="btn btn-secondary btn-lg ms-2">Delogare</a>
+            {% else %}
+                <a href="{{ path('login') }}" class="btn btn-secondary btn-lg ms-2">Autentificare</a>
+            {% endif %}
         </div>
     </header>
 {% endblock %}

@@ -11,9 +11,26 @@ contact:
     controller: App\Controller\ContactController::index
 
 my_trips:
-    path: /curse
-    controller: App\Controller\TripController::index
+    path: /trips/my-trips
+    controller: App\Controller\TripController::myTrips
+
+available_trips:
+    path: /trips/available
+    controller: App\Controller\TripController::availableTrips
+
+login:
+    path: /login
+    controller: App\Controller\SecurityController::login
 
 logout:
     path: /delogare
     controller: App\Controller\SecurityController::logout
+
+register:
+    path: /register
+    controller: App\Controller\RegistrationController::register
+
+book_trip:
+    path: /trips/{id}/book
+    controller: App\Controller\TripController::bookTrip
+    methods: [POST]
