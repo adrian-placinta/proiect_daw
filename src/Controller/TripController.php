@@ -43,4 +43,20 @@ class TripController extends AbstractController
         return $this->tripService->handleAddTripPage($request);
     }
 
+    #[Route('/trips/scan-ticket', name: 'scan_ticket')]
+    #[IsGranted('ROLE_ADMIN')]
+    public function scanTicket(Request $request, TripService $tripService): Response
+    {
+        $qrCode = $request->query->get('qr_code');
+        $valid = null;
+
+        if ($qrCode) {
+            $valid = $tripService->validateTicket($qrCode);
+        }
+
+        return $this->render('trips/scan_ticket.html.twig', [
+            'qrCode' => $qrCode,
+            'valid' => $valid
+        ]);
+    }
 }

@@ -39,3 +39,8 @@ add_trip:
     path: /trips/add
     controller: App\Controller\TripController::addTrip
     methods: [GET, POST]
+
+scan_ticket:
+    path: /trips/scan-ticket
+    controller: App\Controller\TripController::scanTicket
+    methods: [GET, POST]

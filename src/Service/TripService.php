@@ -161,4 +161,17 @@ class TripService extends AbstractController
             'form' => $form->createView(),
         ]);
     }
+
+    public function validateTicket(?string $qrCode): bool
+    {
+        if (!$qrCode) {
+            return false;
+        }
+
+        $userTrip = $this->entityManager->getRepository(UserTrip::class)
+            ->findOneBy(['qrCode' => $qrCode]);
+
+        return $userTrip !== null;
+    }
+
 }
