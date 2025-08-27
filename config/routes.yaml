@@ -1,5 +1,5 @@
 homepage:
-    path: /homepage
+    path: /
     controller: App\Controller\HomeController::index
 
 services:
@@ -34,3 +34,8 @@ book_trip:
     path: /trips/{id}/book
     controller: App\Controller\TripController::bookTrip
     methods: [POST]
+
+add_trip:   
+    path: /trips/add
+    controller: App\Controller\TripController::addTrip
+    methods: [GET, POST]

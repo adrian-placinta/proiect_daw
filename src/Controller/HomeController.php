@@ -17,7 +17,7 @@ final class HomeController extends AbstractController
         $this->homeService = $homeService;
     }
 
-    #[Route('/homepage', name: 'app_home')]
+    #[Route('/', name: 'homepage')]
     public function index(): Response
     {
         $description = $this->homeService->getDescription();

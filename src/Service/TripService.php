@@ -2,13 +2,19 @@
 
 namespace App\Service;
 
+use App\Entity\Trip;
 use App\Entity\User;
 use App\Entity\UserTrip;
 use App\Repository\TripRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class TripService extends AbstractController
@@ -31,9 +37,9 @@ class TripService extends AbstractController
     public function getUserTrips(User $user): array
     {
         return $this->entityManager->createQueryBuilder()
-            ->select('ut', 't')                     // select UserTrip and Trip
+            ->select('ut', 't')
             ->from(UserTrip::class, 'ut')
-            ->join('ut.trip', 't')                  // join with Trip table
+            ->join('ut.trip', 't')
             ->where('ut.user = :user')
             ->setParameter('user', $user)
             ->orderBy('ut.bookingDate', 'DESC')
@@ -77,7 +83,6 @@ class TripService extends AbstractController
         $this->entityManager->flush();
     }
 
-
     public function handleAvailableTripsPage(): Response
     {
         $trips = $this->getAvailableTrips();
@@ -120,5 +125,40 @@ class TripService extends AbstractController
         }
 
         return new RedirectResponse('/trips/my-trips');
+    }
+
+    public function handleAddTripPage(Request $request): Response
+    {
+        $trip = new Trip();
+
+        $form = $this->createFormBuilder($trip)
+            ->add('destination', TextType::class, [
+                'label' => 'Destinație',
+            ])
+            ->add('departureDate', DateTimeType::class, [
+                'label' => 'Data plecării',
+                'widget' => 'single_text',
+            ])
+            ->add('price', NumberType::class, [
+                'label' => 'Preț',
+            ])
+            ->add('availableSeats', IntegerType::class, [
+                'label' => 'Locuri disponibile',
+            ])
+            ->getForm();
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->entityManager->persist($trip);
+            $this->entityManager->flush();
+
+            $this->addFlash('success', 'Cursa a fost adăugată cu succes!');
+            return $this->redirectToRoute('available_trips');
+        }
+
+        return $this->render('trips/add.html.twig', [
+            'form' => $form->createView(),
+        ]);
     }
 }

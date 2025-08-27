@@ -4,8 +4,10 @@ namespace App\Controller;
 
 use App\Service\TripService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class TripController extends AbstractController
 {
@@ -33,4 +35,12 @@ class TripController extends AbstractController
     {
         return $this->tripService->handleBookTrip($id);
     }
+
+    #[Route('/trips/add', name: 'add_trip')]
+    #[IsGranted('ROLE_ADMIN')]
+    public function addTrip(Request $request): Response
+    {
+        return $this->tripService->handleAddTripPage($request);
+    }
+
 }
