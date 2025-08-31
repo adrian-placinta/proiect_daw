@@ -1,33 +1,33 @@
-# Use the official PHP image with FPM
-FROM php:8.2-fpm
+# Build dependencies
+FROM composer:2 AS vendor
+WORKDIR /app
+COPY composer.* ./
+RUN composer install --no-dev --optimize-autoloader --no-scripts
 
-# Set working directory
+# Production image
+FROM php:8.2-fpm-alpine
+RUN apk add --no-cache nginx supervisor \
+    && docker-php-ext-install pdo pdo_mysql opcache \
+    && mkdir -p /run/nginx
+
 WORKDIR /var/www/html
-
-# Install system dependencies
-RUN apt-get update && apt-get install -y \
-    git \
-    unzip \
-    libicu-dev \
-    libpq-dev \
-    libonig-dev \
-    libzip-dev \
-    zip \
-    curl \
-    && docker-php-ext-install intl pdo pdo_mysql mbstring zip opcache
-
-# Install Composer
-COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
-
-# Copy application files
 COPY . .
+COPY --from=vendor /app/vendor ./vendor
 
-# Install PHP dependencies
-RUN composer install --no-interaction --optimize-autoloader
+# Configuration
+COPY docker/nginx.conf /etc/nginx/http.d/default.conf
+COPY docker/supervisord.conf /etc/supervisord.conf
 
-# Set permissions (optional, but often needed)
-RUN chown -R www-data:www-data /var/www/html/var /var/www/html/vendor
+# Permissions
+RUN chown -R www-data:www-data var/ public/ \
+    && chmod -R 775 var/
 
-# Expose port 9000 and start PHP-FPM
-EXPOSE 9000
-CMD ["php-fpm"]
+# Cache warmup and environment setup
+USER www-data
+ENV APP_ENV=prod
+ENV APP_DEBUG=0
+RUN php bin/console cache:warmup --env=prod --no-debug
+
+USER root
+EXPOSE 8080
+CMD ["supervisord", "-c", "/etc/supervisord.conf"]
