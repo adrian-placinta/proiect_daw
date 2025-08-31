@@ -29,5 +29,4 @@ ENV APP_DEBUG=0
 RUN php bin/console cache:warmup --env=prod --no-debug
 
 USER root
-EXPOSE 8080
 CMD ["supervisord", "-c", "/etc/supervisord.conf"]
