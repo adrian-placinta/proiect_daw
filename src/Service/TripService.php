@@ -171,7 +171,13 @@ class TripService extends AbstractController
         $userTrip = $this->entityManager->getRepository(UserTrip::class)
             ->findOneBy(['qrCode' => $qrCode]);
 
-        return $userTrip !== null;
-    }
+        if (!$userTrip || $userTrip->isUsed()) {
+            return false;
+        }
 
+        $userTrip->setIsUsed(true);
+        $this->entityManager->flush();
+
+        return true;
+    }
 }

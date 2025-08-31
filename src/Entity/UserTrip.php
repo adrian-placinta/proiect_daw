@@ -27,13 +27,15 @@ class UserTrip
     #[ORM\Column]
     private ?\DateTimeImmutable $bookingDate = null;
 
+    #[ORM\Column(type: 'boolean')]
+    private bool $isUsed = false;
+
     public function __construct()
     {
         $this->qrCode = md5(uniqid(time(), true));
         $this->bookingDate = new \DateTimeImmutable();
     }
 
-    // Getters
     public function getId(): ?int
     {
         return $this->id;
@@ -59,7 +61,6 @@ class UserTrip
         return $this->bookingDate;
     }
 
-    // Setters
     public function setUser(User $user): self
     {
         $this->user = $user;
@@ -81,6 +82,17 @@ class UserTrip
     public function setBookingDate(\DateTimeImmutable $bookingDate): self
     {
         $this->bookingDate = $bookingDate;
+        return $this;
+    }
+
+    public function isUsed(): bool
+    {
+        return $this->isUsed;
+    }
+
+    public function setIsUsed(bool $used): self
+    {
+        $this->isUsed = $used;
         return $this;
     }
 }
