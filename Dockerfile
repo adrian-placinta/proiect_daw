@@ -18,8 +18,9 @@ COPY --from=vendor /app/vendor ./vendor
 COPY docker/nginx.conf /etc/nginx/http.d/default.conf
 COPY docker/supervisord.conf /etc/supervisord.conf
 
-# Permissions
-RUN chown -R www-data:www-data var/ public/ \
+# Create directories and set permissions
+RUN mkdir -p var/cache var/log var/sessions public/ \
+    && chown -R www-data:www-data var/ public/ \
     && chmod -R 775 var/
 
 # Cache warmup and environment setup
@@ -29,4 +30,5 @@ ENV APP_DEBUG=0
 RUN php bin/console cache:warmup --env=prod --no-debug
 
 USER root
+EXPOSE 8080
 CMD ["supervisord", "-c", "/etc/supervisord.conf"]
