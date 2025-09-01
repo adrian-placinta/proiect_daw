@@ -6,9 +6,8 @@ framework:
     session: true
     form:
         csrf_protection:
-            enabled: true
+            enabled: false
             field_name: 'custom_token_name'
-
 
     #esi: true
     #fragments: true
